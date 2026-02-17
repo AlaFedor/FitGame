@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FitGame</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <section id="screen-welcome" class="screen active">
+        <div class="welcome-inner">
+          <h1 class="logo-title">FITGAME</h1>
+          <button id="start-btn" class="btn-primary">Rozpocznij</button>
+        </div>
+      </section>
+
+      <header class="hud">
+        <div class="hud-left">
+          <div class="avatar-circle">FG</div>
+          <div class="level-pill">Level 1</div>
+        </div>
+
+        <div class="hud-progress">
+          <div class="progress-track">
+            <div id="xp-progress" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <div class="xp-pill"><span id="xp-value">0</span> XP</div>
+          <div id="hud-streak" class="streak-pill">🔥 0</div>
+        </div>
+      </header>
+
+      <section id="screen-game" class="screen">
+        <h2 class="section-title">Twoje misje</h2>
+        <p class="section-subtitle">
+          Wybierz dzień, aby zobaczyć zadania. Kolejne dni odblokują się z
+          czasem.
+        </p>
+
+        <div class="missions-wrapper">
+          <div id="missions-map" class="missions-map"></div>
+        </div>
+      </section>
+
+      <section id="screen-stats" class="screen">
+
+        <h2 class="section-title">Statystyki</h2>
+        <p class="section-subtitle">Twoje postępy w grze fitness</p>
+
+        <!-- GÓRNE KAFELKI -->
+        <div class="stats-cards">
+          <div class="stats-card">
+            <span class="stats-value" id="daysInGame">0</span>
+            <span class="stats-label">Dni w grze</span>
+          </div>
+
+          <div class="stats-card">
+            <span class="stats-value" id="longestStreak">0 🔥</span>
+            <span class="stats-label">Najdłuższy streak</span>
+          </div>
+
+          <div class="stats-card">
+            <span class="stats-value" id="completedMissions">0</span>
+            <span class="stats-label">Wykonane misje</span>
+          </div>
+
+          <div class="stats-card">
+            <span class="stats-value" id="levelsGained">0</span>
+            <span class="stats-label">Zdobyte poziomy</span>
+          </div>
+        </div>
+
+        <!-- WYKRESY -->
+        <div class="stats-charts">
+          <div class="card chart-card">
+            <h3 class="chart-title">Ukończone vs pominięte misje</h3>
+            <canvas id="missionsCompletionChart"></canvas>
+          </div>
+
+          <div class="card chart-card">
+            <h3 class="chart-title">Trenowane partie mięśniowe</h3>
+            <canvas id="muscleGroupsChart"></canvas>
+          </div>
+        </div>
+
+        <!--KALENDARZ-->
+        <div
+          class="card chart-card"
+          style="grid-column: 1 / -1; margin-top: 2rem"
+        >
+          <div
+            class="calendar-header"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 1rem;
+            "
+          >
+            <h3 class="chart-title" style="margin: 0">Kalendarz Aktywności</h3>
+            <div
+              class="calendar-nav"
+              style="display: flex; align-items: center; gap: 15px"
+            >
+              <button id="prev-month" class="icon-button" type="button">
+                ←
+              </button>
+              <span
+                id="current-month-display"
+                style="font-weight: bold; min-width: 140px; text-align: center"
+              ></span>
+              <button id="next-month" class="icon-button" type="button">
+                →
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-weekdays">
+            <div>Pn</div>
+            <div>Wt</div>
+            <div>Śr</div>
+            <div>Czw</div>
+            <div>Pt</div>
+            <div>So</div>
+            <div>Nd</div>
+          </div>
+
+          <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section id="screen-profile" class="screen">
+        <div class="card profile-header">
+          <div class="profile-main">
+            <div class="profile-avatar"></div>
+            <div>
+              <div class="profile-name" id="profile-username">Gracz123</div>
+              <div class="profile-label">Nick</div>
+              <div class="profile-meta" id="firstLogin">
+                Dołączono: 21.11.2025
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-header-right">
+            <div class="profile-level-pill">Level 1</div>
+            <button
+              class="icon-button edit-profile-btn"
+              type="button"
+              aria-label="Edytuj profil"
+              id="profile-edit-btn"
+            >
+              ✏️
+            </button>
+          </div>
+        </div>
+
+        <div class="card profile-body">
+          <div class="profile-tabs">
+            <button class="tab-btn" data-tab="badges">Odznaki</button>
+            <button class="tab-btn active" data-tab="personalization">
+              Personalizacja
+            </button>
+          </div>
+
+          <div id="tab-badges" class="tab-content">
+            <div class="profile-tabs subtabs">
+              <button class="subtab-btn active" data-badgestab="unlocked">
+                Odblokowane
+              </button>
+              <button class="subtab-btn" data-badgestab="locked">
+                Zablokowane
+              </button>
+            </div>
+
+            <div class="badges-view active" data-badgesview="all">
+              <div class="badges-grid">
+                <!-- LISTA ODZNAK - WSZYSTKICH -->
+                <div
+                  class="badge-card"
+                  data-badge-id="first_mission"
+                  data-desc="Ukończ swoją pierwszą misję."
+                >
+                  <div class="badge-icon">⭐</div>
+                  <p class="badge-title">Pierwszy Krok</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="streak_3"
+                  data-desc="Utrzymaj 3-dniowy streak bez przerwy."
+                >
+                  <div class="badge-icon">🔥</div>
+                  <p class="badge-title">Trzy Dni Ognia</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="streak_5"
+                  data-desc="Utrzymaj 5-dniowy streak."
+                >
+                  <div class="badge-icon">⚡</div>
+                  <p class="badge-title">Superszybki Start</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="streak_14"
+                  data-desc="Utrzymaj 14-dniowy streak."
+                >
+                  <div class="badge-icon">🏆</div>
+                  <p class="badge-title">Perfekcyjna Seria</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="xp_150_day"
+                  data-desc="Zdobądź 150 XP w jeden dzień."
+                >
+                  <div class="badge-icon">💎</div>
+                  <p class="badge-title">Dzień Perfekcji</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="missions_10"
+                  data-desc="Ukończ 10 misji."
+                >
+                  <div class="badge-icon">🔟</div>
+                  <p class="badge-title">Na Dobrej Drodze</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="missions_50"
+                  data-desc="Ukończ 50 misji."
+                >
+                  <div class="badge-icon">🔥</div>
+                  <p class="badge-title">Wytrwały Wojownik</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="missions_100"
+                  data-desc="Ukończ 100 misji."
+                >
+                  <div class="badge-icon">👑</div>
+                  <p class="badge-title">Mistrz Konsekwencji</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="collector_5"
+                  data-desc="Odblokuj 5 różnych odznak."
+                >
+                  <div class="badge-icon">🧳</div>
+                  <p class="badge-title">Zdobycz Kolekcjonera</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="month_start"
+                  data-desc="Ukończ misję pierwszego dnia miesiąca."
+                >
+                  <div class="badge-icon">🗓️</div>
+                  <p class="badge-title">Mocny Początek</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="month_end"
+                  data-desc="Ukończ misję ostatniego dnia miesiąca."
+                >
+                  <div class="badge-icon">🌙</div>
+                  <p class="badge-title">Zamknięcie Miesiąca</p>
+                </div>
+                <div
+                  class="badge-card"
+                  data-badge-id="first_personalization"
+                  data-desc="Zapisz swoją pierwszą personalizację profilu."
+                >
+                  <div class="badge-icon">🎨</div>
+                  <p class="badge-title">To Twój Styl</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="tab-personalization"
+            class="tab-content active personalization-section"
+          >
+            <button
+              class="icon-button edit-personalization-btn"
+              type="button"
+              aria-label="Edytuj personalizację"
+              id="edit-personalization-btn"
+            >
+              ✏️
+            </button>
+
+            <div class="settings-group">
+              <h3>Poziom trudności</h3>
+              <div class="pill-row" data-setting="difficulty">
+                <button class="pill active">Podstawowy</button>
+                <button class="pill">Zaawansowany</button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>Cele treningu</h3>
+              <div class="pill-row pill-row-wrap" data-setting="goals">
+                <button class="pill active">Kondycja</button>
+                <button class="pill">Mobilność</button>
+                <button class="pill">Więcej ruchu</button>
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <h3>Partie mięśniowe</h3>
+              <div class="pill-row pill-row-wrap" data-setting="muscles">
+                <button class="pill">Pośladki</button>
+                <button class="pill">Ręce</button>
+                <button class="pill">Plecy</button>
+                <button class="pill active">Brzuch</button>
+                <button class="pill">Nogi</button>
+              </div>
+            </div>
+
+            <div id="personalization-actions">
+              <button
+                id="personalization-cancel-btn"
+                class="btn-secondary"
+                style="flex: 1"
+              >
+                Anuluj
+              </button>
+              <button
+                id="personalization-save-btn"
+                class="btn-primary"
+                style="flex: 1"
+              >
+                Zapisz Zmiany
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="bottom-nav">
+        <button class="nav-btn active" data-screen="game">Gra</button>
+        <button class="nav-btn" data-screen="stats">Statystyki</button>
+        <button class="nav-btn" data-screen="profile">Profil</button>
+      </nav>
+    </div>
+
+    <div id="missions-popup" class="mission-popup">
+      <div class="mission-popup-inner">
+        <button id="mission-close-btn" class="mission-close">✕</button>
+        <h2>Twoje dzisiejsze misje</h2>
+        <ul class="mission-list" id="mission-list"></ul>
+
+        <button
+          id="mission-done-btn"
+          class="btn-primary"
+          style="margin-top: 1.5rem"
+        >
+          DONE
+        </button>
+      </div>
+    </div>
+
+    <div id="levelup-popup" class="game-popup">
+      <div class="popup-card levelup-card">
+        <div class="levelup-icon">🚀</div>
+        <h2>Level Up!</h2>
+        <p>
+          Awansujesz na <strong>Level <span id="levelup-level"></span></strong>
+        </p>
+        <button class="btn-primary" id="levelup-close-btn">OK</button>
+      </div>
+    </div>
+
+    <div id="xp-popup" class="game-popup">
+      <div class="popup-card">
+        <div class="levelup-icon">✨</div>
+        <h2>Świetna robota!</h2>
+        <p>
+          Zdobywasz <strong>+<span id="xp-amount"></span> XP</strong>
+        </p>
+        <button class="btn-primary" id="xp-close-btn">OK</button>
+      </div>
+    </div>
+
+    <div id="badge-popup" class="badge-popup">
+      <div class="badge-popup-inner">
+        <button id="badge-close-btn" class="badge-close">&times;</button>
+        <div class="badge-popup-content">
+          <div id="popup-badge-icon" class="popup-badge-icon">⭐</div>
+          <h3 id="popup-badge-title" class="popup-badge-title">Odznaka</h3>
+          <p
+            id="popup-badge-desc"
+            style="
+              font-size: 0.95rem;
+              color: var(--clr-muted);
+              margin-bottom: 1.5rem;
+            "
+          >
+            [Opis]
+          </p>
+          <button id="badge-download-btn" class="btn-primary">
+            Pobierz odznakę
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="badge-download-popup" class="badge-popup">
+      <div class="badge-popup-inner badge-download">
+        <button id="badge-download-close-btn" class="badge-close">
+          &times;
+        </button>
+        <div class="badge-popup-content">
+          <h2 id="download-badge-title" class="popup-badge-title">Odznaka</h2>
+          <div class="badge-icon-wrapper">
+            <div id="download-badge-icon" class="popup-badge-icon">⭐</div>
+          </div>
+          <div class="download-user-row">
+            <div id="download-avatar" class="avatar-circle">FG</div>
+            <span id="download-username" class="download-username">Nick</span>
+          </div>
+          <button id="final-badge-download-btn" class="btn-primary small-btn">
+            Pobierz
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="badge-unlock-popup" class="game-popup">
+      <div class="popup-card">
+        <button id="badge-unlock-close-btn" class="popup-close">✕</button>
+        <div class="levelup-icon">🏅</div>
+        <h2>Nowa odznaka!</h2>
+        <p id="badge-unlock-desc"></p>
+
+        <button id="badge-unlock-view-btn" class="btn-primary">
+          Zobacz w profilu
+        </button>
+      </div>
+    </div>
+
+    <div id="profile-edit-popup" class="badge-popup">
+      <div class="badge-popup-inner">
+        <button id="profile-edit-close-btn" class="badge-close">&times;</button>
+        <div class="badge-popup-content">
+          <h2>Edycja Profilu</h2>
+
+          <div class="settings-group">
+            <h3>Wybierz Avatara</h3>
+            <div class="pill-row pill-row-wrap" id="avatar-selection-row">
+              <button class="pill avatar-pill" data-icon="FG">FG</button>
+              <button class="pill avatar-pill" data-icon="⭐">⭐</button>
+              <button class="pill avatar-pill" data-icon="🚀">🚀</button>
+              <button class="pill avatar-pill" data-icon="🏋️">🏋️</button>
+              <button class="pill avatar-pill" data-icon="🏃">🏃</button>
+              <button class="pill avatar-pill" data-icon="💻">💻</button>
+              <button class="pill avatar-pill" data-icon="🔥">🔥</button>
+              <button class="pill avatar-pill" data-icon="👑">👑</button>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h3>Nazwa Użytkownika</h3>
+            <input
+              type="text"
+              id="username-input"
+              class="input-field"
+              placeholder="Wpisz nową nazwę"
+            />
+          </div>
+
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem">
+            <button
+              id="profile-cancel-btn"
+              class="btn-secondary"
+              style="flex: 1"
+            >
+              Anuluj
+            </button>
+            <button id="profile-save-btn" class="btn-primary" style="flex: 1">
+              Zapisz Zmiany
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="info-popup" class="game-popup">
+      <div class="popup-card">
+        <button id="info-popup-close" class="popup-close">✕</button>
+        <div class="levelup-icon">ℹ️</div>
+        <h2 id="info-popup-title"></h2>
+        <p id="info-popup-text"></p>
+        <button id="info-popup-ok" class="btn-primary">OK</button>
+      </div>
+    </div>
+
+    <div id="unsaved-popup" class="badge-popup">
+      <div class="badge-popup-inner">
+        <button
+          class="badge-close"
+          type="button"
+          onclick="
+            document.getElementById('unsaved-popup').classList.remove('active')
+          "
+        >
+          &times;
+        </button>
+        <h3 class="popup-badge-title">Masz niezapisane zmiany</h3>
+        <p
+          class="unsaved-text"
+          style="color: var(--accent-red); margin: 1rem 0"
+        >
+          Jeśli opuścisz profil bez kliknięcia „Zapisz”, zmiany personalizacji
+          mogą zostać utracone.
+        </p>
+        <div
+          class="unsaved-actions"
+          style="display: flex; gap: 1rem; margin-top: 2rem"
+        >
+          <button
+            id="unsaved-stay-btn"
+            class="btn-primary small-btn"
+            type="button"
+            style="flex: 1"
+          >
+            Wróć do edycji
+          </button>
+          <button
+            id="unsaved-leave-btn"
+            class="btn-primary small-btn danger-secondary"
+            type="button"
+            style="flex: 1; background: var(--accent-red)"
+          >
+            Wyjdź i utrać zmiany
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmation-popup" class="badge-popup">
+      <div class="badge-popup-inner">
+        <h3 class="popup-badge-title">Czy na pewno?</h3>
+        <p style="color: var(--clr-muted); margin: 1rem 0">
+          Masz niezapisane zmiany. Czy na pewno chcesz je porzucić?
+        </p>
+        <div
+          class="unsaved-actions"
+          style="display: flex; gap: 1rem; margin-top: 1.5rem"
+        >
+          <button
+            id="confirm-no-btn"
+            class="btn-primary small-btn"
+            type="button"
+            style="flex: 1"
+          >
+            Nie, wróć
+          </button>
+          <button
+            id="confirm-yes-btn"
+            class="btn-primary small-btn danger-secondary"
+            type="button"
+            style="flex: 1; background: var(--accent-red)"
+          >
+            Tak, anuluj
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div id="badge-tooltip"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
