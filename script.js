@@ -108,7 +108,7 @@ function resetGameProgress() {
   localStorage.removeItem("xp");
   localStorage.removeItem("userStats");
 
-  // Misje / streaki (jeśli nadal używasz osobno)
+  // Misje / streaki
   localStorage.removeItem("currentLevel");
   localStorage.removeItem("completedLevels");
   localStorage.removeItem("lastCompletionDate");
@@ -233,7 +233,6 @@ function updateXPDisplay() {
   updateXPProgress();
 }
 
-/////// ================= ODZNAKI I ICH ODBLOKOWYWANIE!!!!!! ==============
 const BADGES = [
   {
     id: "first_mission",
@@ -367,7 +366,7 @@ function checkBadges() {
     saveUnlockedBadges(unlocked);
   }
 
-  // ✅ ZAWSZE odświeżamy UI odznak
+  // odświeżamy UI odznak
   updateBadgesUI();
 
   if (pendingBadgeUnlocks.length > 0) {
@@ -559,7 +558,7 @@ const screens = {
 const hud = document.querySelector(".hud");
 const navButtons = document.querySelectorAll(".nav-btn");
 
-// STAŁE DLA TWOJEGO NIESTANDARDOWEGO POPUPA OSTRZEGAWCZEGO
+// STAŁE DLA NIESTANDARDOWEGO POPUPA OSTRZEGAWCZEGO
 const unsavedPopup = document.getElementById("unsaved-popup");
 const unsavedStayBtn = document.getElementById("unsaved-stay-btn");
 const unsavedLeaveBtn = document.getElementById("unsaved-leave-btn");
@@ -762,7 +761,6 @@ function saveMissionState() {
   localStorage.setItem("lastCompletionDate", lastCompletionDate);
 }
 
-// Reszta logiki mapy misji (generowanie)
 const TOTAL_LEVELS = 30;
 
 function getLevelState(levelNumber) {
@@ -812,7 +810,7 @@ function createMissionNode(levelNumber, state, indexFromBottom) {
   node.style.top = `${baseTop}px`;
   node.style.left = `${leftPercent}%`;
 
-  // === OBSŁUGA KLIKNIĘCIA (Nowa, ulepszona wersja) ===
+  // === OBSŁUGA KLIKNIĘCIA  ===
 
   // Pozwalamy klikać zarówno w AKTUALNE jak i UKOŃCZONE
   if (state === "current" || state === "completed") {
@@ -871,8 +869,7 @@ const missionsWrapper = document.querySelector(".missions-wrapper");
 if (missionsMap) {
   missionsMap.innerHTML = "";
   const VERTICAL_GAP = 110;
-  // NOWA LOGIKA (Liniowa)
-  // Twój poziom to liczba ukończonych misji + 1
+  // poziom to liczba ukończonych misji + 1
   const stats = loadUserStats();
   savedCurrentLevel = stats.completedMissions + 1;
 
@@ -928,7 +925,6 @@ tabButtons.forEach((btn) => {
 });
 
 // ====== POPUP EDYCJI PROFILU (Avatar/Nick) ======
-// ... (logika profilu - bez zmian) ...
 
 const profileEditBtn = document.getElementById("profile-edit-btn");
 const profileEditPopup = document.getElementById("profile-edit-popup");
@@ -1026,7 +1022,6 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// ===========================================
 // ====== Personalizacja (Jawny Zapis/Anuluj) ======
 
 const personalizationSection = document.querySelector(
@@ -1415,7 +1410,7 @@ const MISSION_POOL = [
     goals: ["Kondycja"],
   },
 
-  // ===== BOSS BATTLES (Nowe, trudne zadania) =====
+  // ===== BOSS BATTLES =====
   {
     text: "100 pajacyków (Seria Bossa)",
     difficulty: "Boss",
