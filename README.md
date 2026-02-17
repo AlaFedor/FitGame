@@ -77,3 +77,9 @@ Nie trzeba instalować żadnych dodatkowych bibliotek ani narzędzi.
 
 ## Zapisywanie danych
 FitGame zapisuje postęp lokalnie w przeglądarce (LocalStorage): m.in. XP, statystyki, stan misji, streak, log aktywności (kalendarz), profil i personalizację. Dzięki temu po odświeżeniu strony postęp nie znika. 
+
+## Autorzy
+* **Anna Dębska**
+* **Nikola Garbarz**
+* **Zuzanna Czerwińska**
+* **Alicja Fedor**
